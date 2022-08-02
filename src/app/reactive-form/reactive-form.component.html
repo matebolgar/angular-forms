@@ -1,0 +1,137 @@
+<div class="row px-3 w-100">
+
+  <form class="col-4" [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <h2>Alapadatok</h2>
+    <label class="w-100">
+      Keresztnév:
+      <input type="text" formControlName="firstName" class="is-invalid" />
+
+      <div *ngIf="isError('firstName', 'required')" class="text-danger">
+        Keresztnév megadása kötelező.
+      </div>
+      <div *ngIf="isError('firstName', 'pattern')" class="text-danger">
+        Hibás karakterek a keresztnév megadásakor.
+      </div>
+    </label>
+
+    <label class="w-100">
+      Vezetéknév:
+      <input type="text" formControlName="lastName" />
+
+      <div *ngIf="isError('lastName', 'required')" class="text-danger">
+        Vezetéknév megadása kötelező.
+      </div>
+      <div *ngIf="isError('lastName', 'pattern')" class="text-danger">
+        Hibás karakterek a vezetéknév megadásakor.
+      </div>
+
+    </label>
+
+    <label class="w-100">
+      Életkor:
+      <input type="number" formControlName="age" />
+      <div *ngIf="isError('age', 'range')" class="text-danger">
+        Életkor 18 és 100 közötti érték kell legyen.
+      </div>
+    </label>
+
+
+
+    <label class="w-100">
+      Email:
+      <input type="text" formControlName="email" />
+      <div *ngIf="isError('email', 'taken')" class="text-danger">
+        Email cím foglalt.
+      </div>
+    </label>
+
+
+
+    <label class="w-100">
+      Beosztás:
+      <select *ngIf="positions$ | async as positions; else loading" formControlName="position">
+        <option *ngFor="let position of positions" [value]="position">{{ position }}</option>
+      </select>
+    </label>
+
+    <ng-template #loading>
+      <div class="spinner-border text-warning"></div>
+    </ng-template>
+
+
+    <div>
+      Nem:
+      <br>
+      <label class="w-100">
+        Nő
+        <input type="radio" value="female" formControlName="gender" />
+      </label>
+      <label class="w-100">
+        Férfi
+        <input type="radio" value="male" formControlName="gender" />
+      </label>
+    </div>
+
+
+    <div formGroupName="address">
+      <h2>Cím</h2>
+
+      <label class="w-100">
+        Utca:
+        <input type="text" formControlName="street" />
+      </label>
+
+      <label class="w-100">
+        Város:
+        <input type="text" formControlName="city" />
+      </label>
+
+      <label class="w-100">
+        Irányítószám:
+        <input type="number" formControlName="zip" />
+
+        <div *ngIf="isError('address.zip', 'range')" class="text-danger">
+          Irányítószám 1000 és 10000 közötti szám kell legyen.
+        </div>
+      </label>
+    </div>
+
+    <div formArrayName="skills">
+      <h2>Készségek</h2>
+      <button type="button" (click)="addSkill()">+ Új hozzáadása</button>
+
+      <div *ngFor="let skill of getSkills().controls; let i = index">
+        {{i + 1}}: <input type="text" [formControlName]="i" />
+      </div>
+    </div>
+
+    <label class="w-100">
+      Az adatok a valóságnak megfelelnek:
+      <input type="checkbox" formControlName="isAccepted" />
+    </label>
+
+
+
+    <button type="submit" [disabled]="!profileForm.valid">
+      Küldés
+    </button>
+  </form>
+
+  <div *ngIf="value$ | async as value" class="col-4 p-3">
+    <pre>
+Form control-ok értékei:
+{{ value | json }}
+</pre>
+  </div>
+
+
+  <div *ngIf="errors$ | async as error" class="col-4 p-3">
+    <pre>
+Form control-ok hibái:
+{{ error | json }}
+
+Helyes: {{profileForm.valid ? "Igen" : "Nem"}}
+    </pre>
+  </div>
+
+</div>
